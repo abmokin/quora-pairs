@@ -6,7 +6,6 @@ import re
 import itertools
 from gensim.models import Word2Vec, KeyedVectors
 
-
 def get_current_path():
     # Get path of the current directory
     return os.path.dirname(os.path.abspath(__file__))
@@ -39,7 +38,7 @@ def merge_lists(list_1, list_2, is_sub=True):
     for item in result_list_raw:
         flattened_list  = list(itertools.chain(*item))
         parsed_list = []
-        for word_raw in flattened_list:            
+        for word_raw in flattened_list:
             if is_sub:
                 word = re.sub("[^a-zA-Z0-9_-]+", "", word_raw)
             parsed_list.append(word)
@@ -59,14 +58,15 @@ def get_w2v(list_questions, filename):
                         writeCSV.writerow(model.wv[word])
                     else:
                         un_file.write(word+'\n')
-                        writeCSV.writerow([word])                    
+                        writeCSV.writerow([word])
                 writeCSV.writerow(['***'])
                 un_file.write('***\n')
             un_file.close()
         csvfile.close()
 
 if __name__ == "__main__":
-    # Load train.csv as lists; "capacity" -- number of pair of questions
+    # Load train.csv as lists
+    # "capacity" -- number of question pairs; just delete it (or use "-2" value) to load the entire set
     train_1st, train_2nd, train_class = load_data("train.csv", capacity=2)
 
     # Merge lists of the 1st and 2nd questions
