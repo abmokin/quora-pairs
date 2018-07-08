@@ -1,0 +1,62 @@
+﻿                                                       q1                                                 q2  NNa       NNr  BGa       BGr  CDr  best  first  last  year  negs  GPE  PER  ORG      verb  india  modi  movie  quora
+facebook  google  trump  100500  y_pred  y
+187266  What are some differences between German and A...  What are the cultural differences between Aust...    3  0.600000    1  0.076923  0.0     0      1     0     0     0   -1    0    0  1.000000      0     0      0      0
+       0       0      0       0       0  1
+80065   What is the Sahara, and how do the average tem...  What is the Sahara, and how do the average tem...    6  0.545455    9  0.391304  0.0     0      1     0     0     0    1    0   -1  1.000000      0     0      0      0
+       0       0      0       0       0  1
+160378  What are the best over-ear wireless noise canc...   What are the best noise-cancellation headphones?    2  0.400000    1  0.111111  0.0     1      1     1     0     0    0    0    0  0.666667      0     0      0      0
+       0       0      0       0       1  0
+269112                         What's your favorite idea?        What are your favorite Google-X like ideas?    2  1.000000    1  0.125000  0.0     0      1     1     0     0    0    0    0  0.000000      0     0      0      0
+       0       0      0       0       1  0
+186758          How can I get meth out of my system ASAP?  What's the best method to get meth out of your...    2  0.500000    2  0.166667  0.0     0      0     0     0     0    0    0   -1  0.666667      0     0      0      0
+       0       0      0       0       0  1
+247623                          Why do I have nightmares?                            Do you have nightmares?    2  1.000000    1  0.250000  0.0     0      0     1     0     0    0    0    0  1.000000      0     0      0      0
+       0       0      0       0       1  0
+258016  What is more important for losing weight, work...  Is diet really more important than working out...    1  0.333333    2  0.105263  0.0     0      0     0     0     0    0    0    0  0.800000      0     0      0      0
+       0       0      0       0       0  1
+238849  What is the best way to get experience in cybe...              How can I get into Internet security?    2  0.333333    0  0.000000  0.0     0      0     1     0     0    0    0    0  0.500000      0     0      0      0
+       0       0      0       0       0  1
+12239   How do you log in to Facebook if you forgot yo...  How can I open my Facebook account I forgot my...    3  0.600000    0  0.000000  0.0     0      1     0     0     0    0   -1    0  0.428571      0     0      0      0
+       1       0      0       0       0  1
+259163     How do I better communicate with my boyfriend?  How can I better communicate with my boyfriend...    4  0.800000    3  0.187500  0.0     0      1     0     0     0    0    0    0  0.000000      0     0      0      0
+       0       0      0       0       0  1
+85697   Why are ALL my questions being marked as needi...  I can't seem to ask anything anymore. Why does...    4  0.666667    3  0.150000  0.0     0      0     1     0     1    0   -1    0  0.363636      0     0      0      0
+       0       0      0       0       0  1
+244244      What should I do if someone wants to kill me?    Someone is trying to kill me, what should I do?    2  1.000000    2  0.153846  0.0     0      0     0     0     0    0    0    0  0.666667      0     0      0      0
+       0       0      0       0       1  0
+80525        What is the best age to lose your virginity?  What's the best age to lose virginity for a wo...    4  0.800000    2  0.181818  0.0     1      1     0     0     0    0    0    0  0.500000      0     0      0      0
+       0       0      0       0       1  0
+389921  Why do people ask such questions here on Quora...  Why are so many Quora questions about factual ...    5  0.625000    0  0.000000  0.0     0      1     0     0     0    0    1    0  0.250000      0     0      0      1
+       0       0      0       0       0  1
+326     What are the most interesting foods you have e...  What is the most delicious dish you've ever ea...    0  0.000000    0  0.000000  0.0     0      1     0     0     0    0    0    0  0.333333      0     0      0      0
+       0       0      0       0       0  1
+94569   What is the Sahara, and how do the average tem...  What is the Sahara, and how do the average tem...    8  0.800000    9  0.409091  0.0     0      1     1     0     0    1    1    1  1.000000      0     0      0      0
+       0       0      0       0       0  1
+225016                           Are we near World War 3?                      How close is a World War III?    4  0.800000    1  0.125000  0.0     0      0     0     0     0    0    0    0  0.000000      0     0      0      0
+       0       0      0       0       0  1
+125349  Which is the best book for learning Python lan...  Which is the best book for learning python for...    6  0.857143    5  0.277778  0.0     1      1     0     0     0    0    1    0  1.000000      0     0      0      0
+       0       0      0       0       0  1
+179832  What were the major effects of the cambodia ea...  What were the major effects of the cambodia ea...    8  0.727273   10  0.370370  0.0     0      1     0     0     0   -1    0   -1  1.000000      0     0      0      0
+       0       0      0       0       0  1
+295694  [SPOILERS] Who is the Cursed Child in Harry Po...  Who is the cursed child in the Harry Potter an...    9  0.818182    6  0.400000  0.0     0      0     1     0     0    0    1    1  1.000000      0     0      0      0
+       0       0      0       0       0  1
+319050  What are the differences between primary, seco...  What is the difference between a primary, seco...    2  0.500000    5  0.357143  0.0     0      1     0     0     0    0    0    0  0.000000      0     0      0      0
+       0       0      0       0       0  1
+52539            What is the objective of a working plan?        What are the objectives of smart city plan?    4  0.666667    0  0.000000  0.0     0      1     1     0     0    0    0    0  0.000000      0     0      0      0
+       0       0      0       0       1  0
+26453         How do I come out to my family and friends?                   How can I come out to my family?    2  0.666667    2  0.250000  0.0     0      1     0     0     0    0    0    0  0.500000      0     0      0      0
+       0       0      0       0       0  1
+368829              How do you know you're in love again?  How can you know if you're in love or just att...    2  0.666667    2  0.142857  0.0     0      1     0     0     0    0    0    0  0.571429      0     0      0      0
+       0       0      0       0       0  1
+166007  Is dark vacuum energy infinite because the exp...  If energy can't be created or destroyed, how c...    8  0.727273    1  0.032258  0.0     0      0     0     0     1    0    0    0  0.272727      0     0      0      0
+       0       0      0       0       0  1
+82202   Can you create a Pokéstop or Pokégym in Pokémo...             How do I create a new PokéStop or Gym?    2  0.250000    1  0.058824  0.0     0      0     0     0     0   -1   -1    1  0.500000      0     0      0      0
+       0       0      0       0       0  1
+222591  Where can I get highest quality service at exc...  Where can I get quality support to make a succ...    5  0.454545    1  0.052632  0.0     0      1     0     0     0    1    0    0  0.800000      0     0      0      0
+       0       0      0       0       0  1
+232750        How does it feel to travel the world alone?  What is it like to travel around the world alo...    2  1.000000    1  0.083333  0.0     0      0     0     0     0    0    0    0  0.400000      0     0      0      0
+       0       0      0       0       0  1
+302636  I want to get married and bring my wife to USA...  How much time does it take to get a marriage c...    7  0.636364    6  0.230769  0.0     0      0     0     0     0    1    0   -1  0.555556      1     0      0      0
+       0       0      0       0       0  1
+243483  What are the job opportunities for a biomedica...  What are the opportunities for entrepreneurs i...    6  0.750000    3  0.250000  0.0     0      1     1     0     0    1    0    0  1.000000      1     0      0      0         0       0      0       0
+     1  0

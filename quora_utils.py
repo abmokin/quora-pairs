@@ -8,6 +8,8 @@ from nltk import ne_chunk, pos_tag, word_tokenize, bigrams, trigrams
 
 # # Make feature values bigger, for convenience and faster gradient descent
 # SCALE_FACTOR = 100
+DEFAULT_PENALTY = 0
+DEFAULT_PENALTY_SPECIFIC = 0
 
 def get_current_path():
     # Get path of the current directory
@@ -20,6 +22,69 @@ def signs_filter(sentence, replace_this="[\"]+", by_this=""):
     sentence = re.sub("[/]+", " ", sentence)
     # sen = sen[0].lower() + sen[1:] if len(sen) > 1 else sen  # low case first letter
     return sentence
+
+
+def all_signs_filter(sentence):
+    # Filtering signs, e.g., "!", ".", etc.
+    return re.sub("[\?\!\.\,\(\)\"\:\;\[\]\{\}]+", "", sentence)
+
+
+def filter_for_bigrams(sentence):
+    # Filtering common words
+    sentence = sentence.split()
+    words_list = ["Can", "Can't", "Could", "Couldn't", "Did", "Do", "Does", "Didn't", "Don't", "Doesn't",
+                  "How", "What", "When", "Who", "Why", "Will", "Would", "Where", "Whom", "Whose", "Which",
+                  "Shall", "Should", "Are", "Aren't", "Whether", "Wouldn't", "If", "While", "Is", "Isn't",
+                  "Have", "Has", "Had", "There", "Haven't", "Hasn't", "Hadn't", "Was", "Were", "After",
+                  "Before", "As soon as", "By", "one", "a", "an", "the", "of", "to", "I'll", "I'm", "I",
+                  "at", "in", "on", "me", "my"]
+    for word in words_list:
+        sentence[:] = (value for value in sentence if value != word)
+    return " ".join(sentence)
+
+
+def common_filter_simple(sentence):
+    # Filtering common words
+    # sentence = sentence[:-1]  # delete last symbol ('?', '.', etc.)
+    sentence = sentence.split()
+    words_list = ["a", "about", "all", "and", "are", "as", "at", "back", "be", "because", "been",
+                  "but", "can", "come", "could", "did", "do", "for",  "can't", "didn't", "don't"
+                  "from", "get", "go", "going", "good", "got", "had", "have", "he", "her", "here",
+                  "he's", "hey", "him", "his", "how", "I", "if", "I'll", "I'm", "in", "is", "it",
+                  "it's", "just", "know", "like", "look", "me", "mean", "my", "now", "not", "no"
+                  "of", "oh", "OK", "okay", "on", "one", "or", "out", "really", "right", "say",
+                  "see", "she", "so", "some", "something", "tell", "that", "that's", "the", "then",
+                  "there", "they", "think", "this", "time", "to", "up", "want", "was", "we", "well",
+                  "were", "what", "when", "who", "why", "will", "with", "would", "yeah", "yes",
+                  "you", "your", "you're",  # https://en.wiktionary.org/wiki/Wiktionary:Frequency_lists
+                  "where", "why", "whose", "which", "shall", "should", "does", "has",  "aren't",
+                  "an", "whether", "by", "after", "am", "it", "its", "them", "haven't", "hasn't",
+                  "their", "than",  "yours", "these", "those", "being", "while", "wouldn't", "hadn't"]
+    for word in words_list:
+        sentence[:] = (value for value in sentence if value.lower() != word.lower())
+    return " ".join(sentence)
+
+
+def sen_checker(sen1, sen2, is_all, penalty):
+    # Remove duplicates and compare sen lists
+    sen1_uniq = list(set(sen1))
+    sen2_uniq = list(set(sen2))
+
+    sen_inter = list(set(sen1_uniq) & set(sen2_uniq))
+
+    result = 0
+
+    if is_all:
+        if len(sen_inter) == len(sen1_uniq) and len(sen1_uniq) == len(sen2_uniq) and len(sen1_uniq) > 0:
+            result = 1
+        elif len(sen1_uniq) > 0 or len(sen2_uniq) > 0:
+            result = penalty
+    else:
+        if len(sen_inter) > 0:
+            result = 1
+        elif len(sen_inter) == 0 and (len(sen1_uniq) > 0 or len(sen2_uniq) > 0):
+            result = penalty
+    return result
 
 
 # --- POS MAIN ---
@@ -69,7 +134,7 @@ def count_counter(sen1, sen2, sentence1, sentence2, pos_list, is_norm, is_stem, 
 
     return counter
 
-def compare_pos(sentence1, sentence2, pos_list=['NN', 'NNS'], tagset=None, is_norm=False, is_stem=True, penalty=0):
+def compare_pos(sentence1, sentence2, pos_list=['NN', 'NNS'], tagset=None, is_norm=False, is_stem=True, penalty=DEFAULT_PENALTY):
     # # Filter sentences
     # sentence1 = signs_filter(sentence1, "[/]+", " ")
     # sentence2 = signs_filter(sentence2, "[/]+", " ")
@@ -118,7 +183,7 @@ def select_years(sentence):
                 sen_years.append(num_word)
     return sen_years
 
-def compare_years(sentence1, sentence2, is_norm=False, penalty=1):
+def compare_years(sentence1, sentence2, is_norm=False, is_all=False, penalty=0):
     # Select and compare all non-GPE nouns in both sentences; for target='universal'  -->  pos_list=['NOUN', 'NUM']
     sen1 = select_years(sentence1)
     sen2 = select_years(sentence2)
@@ -126,16 +191,13 @@ def compare_years(sentence1, sentence2, is_norm=False, penalty=1):
     # # Count common years tags with the penalty for mismatch
     # counter = count_years(sen1, sen2, sentence1, sentence2, penalty)
 
-    sen1_uniq = list(set(sen1))
-    sen2_uniq = list(set(sen2))
-
-    sen_inter = list(set(sen1_uniq) & set(sen2_uniq))
-
     # # Normalize if is_norm=True
     # if is_norm and len(sen1 + sen2) > 0:
     #     counter /= len(sen1 + sen2)
 
-    return 1 if len(sen_inter) == len(sen1_uniq) and len(sen1_uniq) == len(sen2_uniq) and len(sen1_uniq) > 0 else 0
+    # return 1 if len(sen_inter) == len(sen1_uniq) and len(sen1_uniq) == len(sen2_uniq) and len(sen1_uniq) > 0 else 0
+
+    return sen_checker(sen1, sen2, is_all, penalty)
 
 
 # --- NE COUNTER ---
@@ -194,7 +256,7 @@ def count_ne_counter(sen1, sen2, sentence1, sentence2, is_stem, penalty):
             counter -= penalty
     return counter
 
-def ne_counter(sentence1, sentence2, ne_label='GPE', is_norm=False, is_stem=True, penalty=0):
+def ne_counter(sentence1, sentence2, ne_label='GPE', is_norm=False, is_stem=True, penalty=DEFAULT_PENALTY):
     # Count GPE-labeled tags, with negative-valued penalty for different GPEs in the sentences
     sen1_chunked = ne_chunk(pos_tag(word_tokenize(sentence1)))
     sen2_chunked = ne_chunk(pos_tag(word_tokenize(sentence2)))
@@ -212,8 +274,15 @@ def ne_counter(sentence1, sentence2, ne_label='GPE', is_norm=False, is_stem=True
     if is_norm and len(sen1 + sen2) > 0:
         counter /= len(sen1 + sen2)
 
-    return 1 if counter > 0 else 0
-    # return counter
+
+    result = 0
+
+    if counter > 0:
+        result = 1
+    elif counter == 0 and (len(sen1) > 0 or len(sen2) > 0):
+        result = -1
+
+    return result
 
 
 # --- BIGRAMS ---
@@ -224,25 +293,12 @@ def create_bigrams(sentence):
     sen = [stemmer.stem(word) for word in sen]
     return list(bigrams(sen))
 
-def common_filter_simple(sentence):
-    # Filtering common words
-    sentence = sentence.split()
-    words_list = ["Can", "Can't", "Could", "Couldn't", "Did", "Do", "Does", "Didn't", "Don't", "Doesn't",
-                  "How", "What", "When", "Who", "Why", "Will", "Would", "Where", "Whom", "Whose", "Which",
-                  "Shall", "Should", "Are", "Aren't", "Whether", "Wouldn't", "If", "While", "Is", "Isn't",
-                  "Have", "Has", "Had", "There", "Haven't", "Hasn't", "Hadn't", "Was", "Were", "After",
-                  "Before", "As soon as", "By", "one", "a", "an", "the", "of", "to", "I'll", "I'm", "I",
-                  "at", "in", "on", "me", "my"]
-    for word in words_list:
-        sentence[:] = (value for value in sentence if value != word)
-    return " ".join(sentence)
-
 def compare_bigrams(sentence1, sentence2, is_norm=False):
     # Select and compare all bigrams in both sentences
 
     # Filter first words, i.e "How, What, Who, ..."
-    sentence1 = common_filter_simple(sentence1)
-    sentence2 = common_filter_simple(sentence2)
+    sentence1 = filter_for_bigrams(sentence1)
+    sentence2 = filter_for_bigrams(sentence2)
 
     # Filter signs
     sentence1 = re.sub("[\?\!\.\,\(\)\"\'\$\%\@\#\&\^\:\;\[\]\{\}]+", "", sentence1)
@@ -352,7 +408,7 @@ def select_verbs(sentence):
 
     # Stem entire sentences
     stemmer = SnowballStemmer("english")
-    sen_verbs = [stemmer.stem(word) for word in sen_verbs]    
+    sen_verbs = [stemmer.stem(word) for word in sen_verbs]
 
     return sen_verbs
 
@@ -371,7 +427,7 @@ def count_counter_verbs(sen1, sen2, sentence1, sentence2, is_norm):
     # Stem entire sentences
     stemmer = SnowballStemmer("english")
     sen1_all = [stemmer.stem(word) for word in sen1_all]
-    sen2_all = [stemmer.stem(word) for word in sen2_all]    
+    sen2_all = [stemmer.stem(word) for word in sen2_all]
 
     # Count common non-GPE words from 1st related to 2nd sentence, with the penalty for different words
     for word in sen1:
@@ -412,3 +468,41 @@ def compare_verbs(sentence1, sentence2, is_norm=False):
 def words_number(sentence):
     # Count word number
     return len(word_tokenize(sentence)) / 50
+
+
+# --- SPECIFIC WORDS ---
+
+def select_words(sentence, words_list):
+    # Select all soecific words from the sentence
+    sen = word_tokenize(sentence)
+    sen = [word.lower() for word in sen]
+    sen_words = [word for word in words_list if word.lower() in sen]
+    return sen_words
+
+def compare_specific_words(sentence1, sentence2, words_list, is_all = True, penalty=DEFAULT_PENALTY_SPECIFIC):
+    # Select and compare all specific words in both sentences
+    sen1 = select_words(sentence1, words_list)
+    sen2 = select_words(sentence2, words_list)
+
+    return sen_checker(sen1, sen2, is_all, penalty)
+
+
+# --- SPECIFIC RNUMBERS ---
+
+def select_numbers(sentence, numbers_list):
+    # Select all numbers from the sentence
+    sen_tagged = pos_tag(word_tokenize(sentence))
+    sen_pos = [word for (word, tag) in sen_tagged if tag == 'CD']
+    sen_numbers = []
+    for num in sen_pos:
+        num = re.sub("\D", "", num)
+        if num in numbers_list:
+            sen_numbers.append(num)
+    return sen_numbers
+
+def compare_specific_numbers(sentence1, sentence2, numbers_list, is_all=False, penalty=DEFAULT_PENALTY_SPECIFIC):
+    # Select and compare all specific numbers in both sentences
+    sen1 = select_numbers(sentence1, numbers_list)
+    sen2 = select_numbers(sentence2, numbers_list)
+
+    return sen_checker(sen1, sen2, is_all, penalty)
