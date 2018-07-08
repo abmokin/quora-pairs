@@ -25,7 +25,7 @@ import pickle
 # nltk.download('universal_tagset')
 
 # Decomposition constants
-FILE_NUM = 8
+FILE_NUM = 5
 N_ROWS = 100000
 SKIP_ROWS = (FILE_NUM - 1) * N_ROWS 
 
@@ -146,7 +146,7 @@ def main():
     data['is_duplicate'] = xgb_model.predict(X_test)
     data.drop(data.columns[range(1,25)], axis=1, inplace=True)
     
-    data.to_csv(get_current_path() + '/predictions/pred_' + str(FILE_NUM) + '.csv', index=False, header=False)
+    data.to_csv(get_current_path() + '/pred/pred_' + str(FILE_NUM) + '.csv', index=False, header=False)
 
     # # Errors analysis
     # pd.set_option('display.max_colwidth', 50)
