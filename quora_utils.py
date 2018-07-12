@@ -6,6 +6,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk import ne_chunk, pos_tag, word_tokenize, bigrams, trigrams
 # from itertools import chain
 
+
 # # Make feature values bigger, for convenience and faster gradient descent
 # SCALE_FACTOR = 100
 DEFAULT_PENALTY = 0
@@ -23,10 +24,11 @@ def signs_filter(sentence, replace_this="[\"]+", by_this=""):
     # sen = sen[0].lower() + sen[1:] if len(sen) > 1 else sen  # low case first letter
     return sentence
 
-
 def all_signs_filter(sentence):
     # Filtering signs, e.g., "!", ".", etc.
-    return re.sub("[\?\!\.\,\(\)\"\:\;\[\]\{\}]+", "", sentence)
+    sentence = re.sub("[/]+", " ", sentence)    
+    sentence = re.sub("[\?\!\.\,\(\)\"\:\;\[\]\{\}’]+", "", sentence)
+    return sentence
 
 
 def filter_for_bigrams(sentence):
@@ -47,44 +49,27 @@ def common_filter_simple(sentence):
     # Filtering common words
     # sentence = sentence[:-1]  # delete last symbol ('?', '.', etc.)
     sentence = sentence.split()
-    words_list = ["a", "about", "all", "and", "are", "as", "at", "back", "be", "because", "been",
-                  "but", "can", "come", "could", "did", "do", "for",  "can't", "didn't", "don't"
-                  "from", "get", "go", "going", "good", "got", "had", "have", "he", "her", "here",
-                  "he's", "hey", "him", "his", "how", "I", "if", "I'll", "I'm", "in", "is", "it",
-                  "it's", "just", "know", "like", "look", "me", "mean", "my", "now", "not", "no"
-                  "of", "oh", "OK", "okay", "on", "one", "or", "out", "really", "right", "say",
-                  "see", "she", "so", "some", "something", "tell", "that", "that's", "the", "then",
-                  "there", "they", "think", "this", "time", "to", "up", "want", "was", "we", "well",
-                  "were", "what", "when", "who", "why", "will", "with", "would", "yeah", "yes",
-                  "you", "your", "you're",  # https://en.wiktionary.org/wiki/Wiktionary:Frequency_lists
-                  "where", "why", "whose", "which", "shall", "should", "does", "has",  "aren't",
-                  "an", "whether", "by", "after", "am", "it", "its", "them", "haven't", "hasn't",
-                  "their", "than",  "yours", "these", "those", "being", "while", "wouldn't", "hadn't"]
+    # words_list = ["a", "about", "all", "and", "are", "as", "at", "back", "be", "because", "been",
+    #               "but", "can", "come", "could", "did", "do", "for",  "can't", "didn't", "don't"
+    #               "from", "get", "go", "going", "good", "got", "had", "have", "he", "her", "here",
+    #               "he's", "hey", "him", "his", "how", "I", "if", "I'll", "I'm", "in", "is", "it",
+    #               "it's", "just", "know", "like", "look", "me", "mean", "my", "now", "not", "no"
+    #               "of", "oh", "OK", "okay", "on", "one", "or", "out", "really", "right", "say",
+    #               "see", "she", "so", "some", "something", "tell", "that", "that's", "the", "then",
+    #               "there", "they", "think", "this", "time", "to", "up", "want", "was", "we", "well",
+    #               "were", "what", "when", "who", "why", "will", "with", "would", "yeah", "yes",
+    #               "you", "your", "you're",  # https://en.wiktionary.org/wiki/Wiktionary:Frequency_lists
+    #               "where", "why", "whose", "which", "shall", "should", "does", "has",  "aren't",
+    #               "an", "whether", "by", "after", "am", "it", "its", "them", "haven't", "hasn't",
+    #               "their", "than",  "yours", "these", "those", "being", "while", "wouldn't", "hadn't",
+    #               "of", "from"]
+    words_list = ["can", "come", "could", "did", "do", "can't", "didn't", "don't", "had", "have", "how", "I'll", "I'm",
+                  "so", "that", "that's", "there", "was", "were", "what", "when", "who", "why", "will", "would", 
+                  "where", "why", "whose", "which", "shall", "should", "does", "has",  "aren't", "whether", 
+                  "haven't", "hasn't", "these", "those", "being", "while", "wouldn't", "hadn't", "what's"]                  
     for word in words_list:
         sentence[:] = (value for value in sentence if value.lower() != word.lower())
     return " ".join(sentence)
-
-
-def sen_checker(sen1, sen2, is_all, penalty):
-    # Remove duplicates and compare sen lists
-    sen1_uniq = list(set(sen1))
-    sen2_uniq = list(set(sen2))
-
-    sen_inter = list(set(sen1_uniq) & set(sen2_uniq))
-
-    result = 0
-
-    if is_all:
-        if len(sen_inter) == len(sen1_uniq) and len(sen1_uniq) == len(sen2_uniq) and len(sen1_uniq) > 0:
-            result = 1
-        elif len(sen1_uniq) > 0 or len(sen2_uniq) > 0:
-            result = penalty
-    else:
-        if len(sen_inter) > 0:
-            result = 1
-        elif len(sen_inter) == 0 and (len(sen1_uniq) > 0 or len(sen2_uniq) > 0):
-            result = penalty
-    return result
 
 
 # --- POS MAIN ---
@@ -183,7 +168,7 @@ def select_years(sentence):
                 sen_years.append(num_word)
     return sen_years
 
-def compare_years(sentence1, sentence2, is_norm=False, is_all=False, penalty=0):
+def compare_years(sentence1, sentence2, is_norm=False, is_all=False, penalty=0, result_base=1):
     # Select and compare all non-GPE nouns in both sentences; for target='universal'  -->  pos_list=['NOUN', 'NUM']
     sen1 = select_years(sentence1)
     sen2 = select_years(sentence2)
@@ -197,7 +182,7 @@ def compare_years(sentence1, sentence2, is_norm=False, is_all=False, penalty=0):
 
     # return 1 if len(sen_inter) == len(sen1_uniq) and len(sen1_uniq) == len(sen2_uniq) and len(sen1_uniq) > 0 else 0
 
-    return sen_checker(sen1, sen2, is_all, penalty)
+    return sen_checker(sen1, sen2, is_all, penalty, result_base)
 
 
 # --- NE COUNTER ---
@@ -479,12 +464,33 @@ def select_words(sentence, words_list):
     sen_words = [word for word in words_list if word.lower() in sen]
     return sen_words
 
-def compare_specific_words(sentence1, sentence2, words_list, is_all = True, penalty=DEFAULT_PENALTY_SPECIFIC):
+def sen_checker(sen1, sen2, is_all, penalty, result_base):
+    # Remove duplicates and compare sen lists
+    sen1_uniq = list(set(sen1))
+    sen2_uniq = list(set(sen2))
+
+    sen_inter = list(set(sen1_uniq) & set(sen2_uniq))
+
+    result = 0
+
+    if is_all:
+        if len(sen_inter) == len(sen1_uniq) and len(sen1_uniq) == len(sen2_uniq) and len(sen1_uniq) > 0:
+            result = result_base
+        elif len(sen1_uniq) > 0 or len(sen2_uniq) > 0:
+            result = penalty
+    else:
+        if len(sen_inter) > 0:
+            result = result_base
+        elif len(sen_inter) == 0 and (len(sen1_uniq) > 0 or len(sen2_uniq) > 0):
+            result = penalty
+    return result
+
+def compare_specific_words(sentence1, sentence2, words_list, is_all = True, penalty=DEFAULT_PENALTY_SPECIFIC, result_base=1):
     # Select and compare all specific words in both sentences
     sen1 = select_words(sentence1, words_list)
     sen2 = select_words(sentence2, words_list)
 
-    return sen_checker(sen1, sen2, is_all, penalty)
+    return sen_checker(sen1, sen2, is_all, penalty, result_base)
 
 
 # --- SPECIFIC RNUMBERS ---
@@ -500,9 +506,27 @@ def select_numbers(sentence, numbers_list):
             sen_numbers.append(num)
     return sen_numbers
 
-def compare_specific_numbers(sentence1, sentence2, numbers_list, is_all=False, penalty=DEFAULT_PENALTY_SPECIFIC):
+def compare_specific_numbers(sentence1, sentence2, numbers_list, is_all=False, penalty=DEFAULT_PENALTY_SPECIFIC, result_base=1):
     # Select and compare all specific numbers in both sentences
     sen1 = select_numbers(sentence1, numbers_list)
     sen2 = select_numbers(sentence2, numbers_list)
 
-    return sen_checker(sen1, sen2, is_all, penalty)
+    return sen_checker(sen1, sen2, is_all, penalty, result_base)
+
+
+def find_specific_words(sentence1, sentence2, label):
+    # Select and compare all specific numbers in both sentences
+    pos_list = ['NOUN','ADJ','NUM']
+    tagset = 'universal'
+    is_stem = True
+    sen1 = select_pos(sentence1, pos_list, tagset, is_stem)
+    sen2 = select_pos(sentence2, pos_list, tagset, is_stem)
+
+    if label:
+        result = list(set(sen1) & set(sen2))
+        # result = []
+    else:
+        # result = list(set(sen1).symmetric_difference(set(sen2)))
+        result = []
+
+    return result
